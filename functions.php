@@ -34,12 +34,14 @@ function px_scripts() {
         // add it back into the queue
         wp_enqueue_script('jquery');
 
+		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/vendor/adapt.min.js', 'jquery');
+
 		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/vendor/modernizr-2.6.2.min.js', 'jquery');
 
 		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/plugins.js', 'jquery');
 
 		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/main.js', 'jquery');
-
+		
 		wp_enqueue_style( 'px-style', get_stylesheet_uri() );
 
     }

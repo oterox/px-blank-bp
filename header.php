@@ -17,6 +17,27 @@
 	<![endif]-->
 
 	<link rel="icon" type="image/png" href="<?php bloginfo('template_url') ?>/favicon.ico" />
+
+	<script type="text/javascript">	
+	// Edit to suit your needs.
+	var ADAPT_CONFIG = {
+	  // Where is your CSS?
+	  path: '<?php bloginfo('template_url') ?>/css/',
+
+	  // false = Only run once, when page first loads.
+	  // true = Change on window resize and page tilt.
+	  dynamic: true,
+
+	  // First range entry is the minimum.
+	  // Last range entry is the maximum.
+	  // Separate ranges by "to" keyword.
+	  range: [
+	    '0px    to 760px  = mobile.css',
+	    '760px  to 1008px  = 720.css',
+	    '1008px  to 3000px = 978.css'
+	  ]
+	};
+	</script>
 	
 	<?php wp_head(); ?>
 </head>

@@ -1,0 +1,16 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Kendra -- Lead Designer -- 
+	Oterox -- Lead Developer -- oterox
+	
+# THANKS
+
+    ThePixellary
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    Normalize.css, jQuery, Modernizr

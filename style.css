@@ -1,0 +1,15 @@
+/*
+Theme Name: px-blank-BP
+Theme URI: http://www.pixellarylabs.com/
+Description: px-blank boiler plate base theme.
+Author: ThePixellary
+Author URI: http://www.pixellarylabs.com/
+Version: 0.1
+Tags: blank
+
+General comments.
+*/
+
+@import url("css/normalize.css");
+@import url("css/960.css");
+@import url("css/theme.css");

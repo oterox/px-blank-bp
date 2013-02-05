@@ -2,14 +2,18 @@
 		</div>
 	</div><!-- /main-wrapper -->
 
-	<div class="container_12">
-		<div class="grid_12">
-			<footer>
-				<cite>&copy;copyright <?php echo date('Y'); ?> </cite>
-			</footer>
+	<div id="footer-wrapper">
+		<div class="container_12">
+			<div class="grid_12">
+				<footer>
+					<cite>&copy;copyright <?php echo date('Y'); ?> </cite>
+				</footer>
+			</div>
 		</div>
-	</div>
-	<div class="clearfix"></div>
+		<div class="clearfix"></div>
+	</div><!-- / footer-wrapper -->
+	
+
 	<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 	<script>
 	var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];

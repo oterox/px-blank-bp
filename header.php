@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>		<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>			<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>			<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->	<html class="no-js"> <!--<![endif]-->
+<html>
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -62,24 +59,24 @@
 </head>
 
 <body <?php body_class(); ?>>
-	<header>
+	<div id="header-wrapper">	
 		<div class="container_12">
 			<div class="grid_12">
+				<header>
 
-				<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a></h1>
-								
-				<nav>
-					<ul>
-						<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_class' => 'nav-menu' ) ); ?>
-					</ul>
-				</nav><!-- end nav -->
+					<h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a></h1>
+									
+					<nav>
+						<ul>
+							<?php wp_nav_menu( array( 'theme_location' => 'primary', 'menu_class' => 'nav-menu' ) ); ?>
+						</ul>
+					</nav><!-- end nav -->
 
+				</header>
 			</div>
 		</div>
+	</div><!-- / header-wrapper -->
 
-
-	</header>
-
-	<div class="main-wrapper">
+	<div id="main-wrapper">
 		<div class="container_12">
 			<div class="main">

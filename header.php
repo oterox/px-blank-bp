@@ -8,7 +8,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title><?php wp_title( '|', true, 'right' ); ?></title>
 	<meta name="author" content="Thepixellary" />
-	<meta name="viewport" content="width=device-width">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 	<meta name="description" content="">
 	<meta name="keywords" content="" />
 	<?php // Loads HTML5 JavaScript file to add support for HTML5 elements in older IE versions. ?>

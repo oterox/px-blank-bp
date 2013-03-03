@@ -1,5 +1,8 @@
 <?php 
 
+// ---------------------------------------------------
+// Theme setup
+// ---------------------------------------------------
 function px_theme_setup() {
 
 	load_theme_textdomain( 'thepixellary', get_template_directory() . '/languages' );
@@ -20,7 +23,9 @@ function px_theme_setup() {
 
 add_action( 'after_setup_theme', 'px_theme_setup' );
 
-
+// ---------------------------------------------------
+// Enqueue scripts
+// ---------------------------------------------------
 function px_scripts() {
 	    
     if ( ! is_admin() ) {
@@ -41,16 +46,21 @@ function px_scripts() {
 		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/plugins.js', 'jquery');
 
 		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/main.js', 'jquery');
-		
+
 		wp_enqueue_style( 'px-style', get_stylesheet_uri() );
 
-    }
+    } else {
+		
+		//wp_enqueue_script("json2");
 
+    }
 
 }
 add_action( 'wp_enqueue_scripts', 'px_scripts' );
 
-
+// ---------------------------------------------------
+// Show home in menu
+// ---------------------------------------------------
 function px_page_menu_args( $args ) {
 	if ( ! isset( $args['show_home'] ) )
 		$args['show_home'] = true;
@@ -58,10 +68,16 @@ function px_page_menu_args( $args ) {
 }
 add_filter( 'wp_page_menu_args', 'px_page_menu_args' );
 
+// ---------------------------------------------------
+// Custom excerpt
+// ---------------------------------------------------
 function get_the_custom_excerpt($length){
 	return substr( get_the_excerpt(), 0, strrpos( substr( get_the_excerpt(), 0, $length), ' ' ) ).'...';
 }
 
+// ---------------------------------------------------
+// Register sidebars
+// ---------------------------------------------------
 function px_widgets_init() {
 	register_sidebar( array(
 		'name' => __( 'Main Sidebar', 'thepixellary' ),
@@ -76,276 +92,100 @@ function px_widgets_init() {
 }
 add_action( 'widgets_init', 'px_widgets_init' );
 
-
+// ---------------------------------------------------
+// add classes to body
+// ---------------------------------------------------
 function px_body_class( $classes ) {
 	
-	if ( ! is_active_sidebar( 'sidebar-1' ) || is_page_template( 'page-templates/full-width.php' ) )
-		$classes[] = 'full-width';
+	if ( ! is_active_sidebar( 'sidebar-1' ) || is_page_template( 'page-templates/full-width-template.php' ) )
+		$classes[] = 'full-width-template';
 
 	if ( is_page_template( 'page-templates/front-page.php' ) ) 
 		$classes[] = 'template-front-page';	
 	
+	global $wp_query;
+	$classes[] = $wp_query->post->post_name;
+
 	return $classes;
 }
 add_filter( 'body_class', 'px_body_class' );
 
+// ---------------------------------------------------
+// Add Breadcrumb Navigation
+// ---------------------------------------------------
+function px_breadcrumb() {
+	
+	global $post;
+    $pid = $post->ID;
+	$trail = '<a href="'. home_url('/') .'">'. __('Home', 'thepixellary') .'</a>';
+ 
+    if (is_front_page()) {
+        // do nothing
+	} elseif ( get_post_type() == 'sample_cpt' ) { //customized trail for custom post type
+		
+		//$terms = get_the_term_list($pid, 'sample_tax', ' ', ', ', '');
+		$trail.= ' &raquo; '. $post->post_title."\n";	
+
+	} elseif (is_page()) {
+		$bcarray = array();
+		$pdata = get_post($pid);
+		$bcarray[] = ' &raquo; '.$pdata->post_title."\n";
+		while ($pdata->post_parent) {
+			$pdata = get_post($pdata->post_parent);
+			$bcarray[] = ' &raquo; <a href="'.get_permalink($pdata->ID).'">'.$pdata->post_title.'</a>';
+		}
+	   $bcarray = array_reverse($bcarray);
+		 foreach ($bcarray AS $listitem) {
+			 $trail .= $listitem;
+		 }
+	} elseif (is_single()) {
+		$pdata = get_the_category($pid);
+		$adata = get_post($pid);
+		if(!empty($pdata)){
+			$data = get_category_parents($pdata[0]->cat_ID, TRUE, ' &raquo; ');
+			$trail .= " &raquo; ".substr($data,0,-8);
+		}
+		$trail.= ' &raquo; '.$adata->post_title."\n";
+	} elseif (is_category()) {
+		$pdata = get_the_category($pid);
+		$data = get_category_parents($pdata[0]->cat_ID, TRUE, ' &raquo; ');
+		if(!empty($pdata)){
+			$trail .= " &raquo; ".substr($data,0,-8);
+		}
+	}
+
+	$trail.="";
+
+	return $trail;
+}
 
 // ---------------------------------------------------
-// Mobile detection.
+// Adds a current_top_ancestor class to the top level parent
 // ---------------------------------------------------
+add_filter('nav_menu_css_class', 'current_top_nav_class', 10, 2);
+function current_top_nav_class($classes, $item) {
+   
+    $post_type = get_query_var('post_type');
 
-$useragent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : "";
+    //top level current
+    /*if( in_array( 'current-menu-item', $classes ) && $item->menu_item_parent == 0 || in_array( 'current-' . $post_type .'-ancestor', $classes ) ){
+    	array_push($classes, 'current-top-ancestor');
+    	array_push($classes, 'parent-'.$item->menu_item_parent);
+    }*/ 
+    if( in_array( 'current-' . $post_type .'-ancestor', $classes ) || in_array( 'current-page-ancestor', $classes )){
+    	if( $item->menu_item_parent == 0 ){
+        	array_push($classes, 'current-top-ancestor');
+		}
+	}elseif(in_array( 'current-menu-item', $classes ) && $item->menu_item_parent == 0 ){
+		array_push($classes, 'current-top-ancestor');
+	}
 
-/***************************************************************
-* Function is_iphone
-* Detect the iPhone
-***************************************************************/
-
-function is_iphone() {
-	global $useragent;
-	return(preg_match('/iphone/i',$useragent));
-}
-
-/***************************************************************
-* Function is_ipad
-* Detect the iPad
-***************************************************************/
-
-function is_ipad() {
-	global $useragent;
-	return(preg_match('/ipad/i',$useragent));
-}
-
-/***************************************************************
-* Function is_ipod
-* Detect the iPod, most likely the iPod touch
-***************************************************************/
-
-function is_ipod() {
-	global $useragent;
-	return(preg_match('/ipod/i',$useragent));
-}
-
-/***************************************************************
-* Function is_android
-* Detect an android device. They *SHOULD* all behave the same
-***************************************************************/
-
-function is_android() {
-	global $useragent;
-	return(preg_match('/android/i',$useragent));
-}
-
-/***************************************************************
-* Function is_blackberry
-* Detect a blackberry device 
-***************************************************************/
-
-function is_blackberry() {
-	global $useragent;
-	return(preg_match('/blackberry/i',$useragent));
-}
-
-/***************************************************************
-* Function is_opera_mobile
-* Detect both Opera Mini and hopfully Opera Mobile as well
-***************************************************************/
-
-function is_opera_mobile() {
-	global $useragent;
-	return(preg_match('/opera mini/i',$useragent));
-}
-
-/***************************************************************
-* Function is_palm
-* Detect a webOS device such as Pre and Pixi
-***************************************************************/
-
-function is_palm() {
-	global $useragent;
-	return(preg_match('/webOS/i', $useragent));
-}
-
-/***************************************************************
-* Function is_symbian
-* Detect a symbian device, most likely a nokia smartphone
-***************************************************************/
-
-function is_symbian() {
-	global $useragent;
-	return(preg_match('/Series60/i', $useragent) || preg_match('/Symbian/i', $useragent));
-}
-
-/***************************************************************
-* Function is_windows_mobile
-* Detect a windows smartphone
-***************************************************************/
-
-function is_windows_mobile() {
-	global $useragent;
-	return(preg_match('/WM5/i', $useragent) || preg_match('/WindowsMobile/i', $useragent));
-}
-
-/***************************************************************
-* Function is_lg
-* Detect an LG phone
-***************************************************************/
-
-function is_lg() {
-	global $useragent;
-	return(preg_match('/LG/i', $useragent));
-}
-
-/***************************************************************
-* Function is_motorola
-* Detect a Motorola phone
-***************************************************************/
-
-function is_motorola() {
-	global $useragent;
-	return(preg_match('/\ Droid/i', $useragent) || preg_match('/XT720/i', $useragent) || preg_match('/MOT-/i', $useragent) || preg_match('/MIB/i', $useragent));
-}
-
-/***************************************************************
-* Function is_nokia
-* Detect a Nokia phone
-***************************************************************/
-
-function is_nokia() {
-	global $useragent;
-	return(preg_match('/Series60/i', $useragent) || preg_match('/Symbian/i', $useragent) || preg_match('/Nokia/i', $useragent));
-}
-
-/***************************************************************
-* Function is_samsung
-* Detect a Samsung phone
-***************************************************************/
-
-function is_samsung() {
-	global $useragent;
-	return(preg_match('/Samsung/i', $useragent));
-}
-
-/***************************************************************
-* Function is_samsung_galaxy_tab
-* Detect the Galaxy tab
-***************************************************************/
-
-function is_samsung_galaxy_tab() {
-	global $useragent;
-	return(preg_match('/SPH-P100/i', $useragent));
-}
-
-/***************************************************************
-* Function is_sony_ericsson
-* Detect a Sony Ericsson
-***************************************************************/
-
-function is_sony_ericsson() {
-	global $useragent;
-	return(preg_match('/SonyEricsson/i', $useragent));
-}
-
-/***************************************************************
-* Function is_nintendo
-* Detect a Nintendo DS or DSi
-***************************************************************/
-
-function is_nintendo() {
-	global $useragent;
-	return(preg_match('/Nintendo DSi/i', $useragent) || preg_match('/Nintendo DS/i', $useragent));
-}
-
-/***************************************************************
-* Function is_handheld
-* Wrapper function for detecting ANY handheld device
-***************************************************************/
-
-function is_handheld() {
-	return(is_iphone() || is_ipad() || is_ipod() || is_android() || is_blackberry() || is_opera_mobile() || is_palm() || is_symbian() || is_windows_mobile() || is_lg() || is_motorola() || is_nokia() || is_samsung() || is_samsung_galaxy_tab() || is_sony_ericsson() || is_nintendo());
-}
-
-/***************************************************************
-* Function is_mobile
-* Wrapper function for detecting ANY mobile phone device
-***************************************************************/
-
-function is_mobile() {
-	if (is_tablet()) { return false; }  // this catches the problem where an Android device may also be a tablet device
-	return(is_iphone() || is_ipod() || is_android() || is_blackberry() || is_opera_mobile() || is_palm() || is_symbian() || is_windows_mobile() || is_lg() || is_motorola() || is_nokia() || is_samsung() || is_sony_ericsson() || is_nintendo());
-}
-
-/***************************************************************
-* Function is_ios
-* Wrapper function for detecting ANY iOS/Apple device
-***************************************************************/
-
-function is_ios() {
-	return(is_iphone() || is_ipad() || is_ipod());
-
-}
-
-/***************************************************************
-* Function is_tablet
-* Wrapper function for detecting tablet devices (needs work)
-***************************************************************/
-
-function is_tablet() {
-	return(is_ipad() || is_samsung_galaxy_tab());
-}
-
-/***************************************************************
-* Function mobble_body_class
-* Add mobilie info to the body class if activated in settings
-***************************************************************/
-
-if ( !is_admin() ) {	
-	add_filter('body_class','mobile_body_class');
-}
-
-function mobile_body_class($classes) 
-{
-
-	global $is_lynx, $is_gecko, $is_IE, $is_opera, $is_NS4, $is_safari, $is_chrome;
-
-	// top level
-	if (is_handheld()) { $classes[] = "handheld"; };
-	if (is_mobile()) { $classes[] = "mobile"; };
-	if (is_ios()) { $classes[] = "ios"; };
-	if (is_tablet()) { $classes[] = "tablet"; };
-
-	// specific 
-	if (is_iphone()) { $classes[] = "iphone"; };
-	if (is_ipad()) { $classes[] = "ipad"; };
-	if (is_ipod()) { $classes[] = "ipod"; };
-	if (is_android()) { $classes[] = "android"; };
-	if (is_blackberry()) { $classes[] = "blackberry"; };
-	if (is_opera_mobile()) { $classes[] = "opera-mobile";}
-	if (is_palm()) { $classes[] = "palm";}
-	if (is_symbian()) { $classes[] = "symbian";}
-	if (is_windows_mobile()) { $classes[] = "windows-mobile"; }
-	if (is_lg()) { $classes[] = "lg"; }
-	if (is_motorola()) { $classes[] = "motorola"; }
-	if (is_nokia()) { $classes[] = "nokia"; }
-	if (is_samsung()) { $classes[] = "samsung"; }
-	if (is_samsung_galaxy_tab()) { $classes[] = "samsung-galaxy-tab"; }
-	if (is_sony_ericsson()) { $classes[] = "sony-ericsson"; }
-	if (is_nintendo()) { $classes[] = "nintendo"; }
-	
-	// bonus
-	if (!is_handheld()) { $classes[] = "desktop"; }
-	if ($is_lynx) { $classes[] = "lynx"; }
-	if ($is_gecko) { $classes[] = "gecko"; }
-	if ($is_opera) { $classes[] = "opera"; }
-	if ($is_NS4) { $classes[] = "ns4"; }
-	if ($is_safari) { $classes[] = "safari"; }
-	if ($is_chrome) { $classes[] = "chrome"; }
-	if ($is_IE) { $classes[] = "ie"; }
-	
-	return $classes;
+    return $classes;
 }
 
 	
+
+
 // ---------------------------------------------------
 // Helper function to return the theme option value.
 // ---------------------------------------------------
@@ -369,6 +209,9 @@ if ( !function_exists( 'of_get_option' ) ) {
 	}
 }	
 
+require_once(TEMPLATEPATH . '/metaboxes/meta_box.php');
+require_once(TEMPLATEPATH . '/inc/sample.php');
+require_once(TEMPLATEPATH . '/core/mobile.php');
 //require_once(TEMPLATEPATH . '/options.php');
 //require_once(TEMPLATEPATH . '/px_helper.php');
 

@@ -78,10 +78,94 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.current-top-ancestor > a { text-decoration: none; color: red; }
 
 
+/* The container wrapping ul.dropdown */
+#navwrap {
+float:left;
+width:100%;
+background: red;
+font: 1.0em Verdana, Arial, sans-serif;
 
-
+}
+ 
+/* Top level Unordered list */
+ul.dropdown {
+list-style:none;
+float:left;
+width:100%;
+padding: 0 10px;
+}
+ 
+ul.dropdown  li{
+float:left; /* makes horiz list */
+position:relative; /* hey Submenu ULs, appear below! */
+}
+ 
+ul.dropdown a {
+padding:5px 10px; /*space the items, occupy entire height too.*/
+text-decoration:none;
+border:1px solid #777;
+}
+ 
+/* Style the link hover */
+ul.dropdown li:hover a {
+background:#bdbdbd;
+border:1px solid #777;
+}
+ 
+/* Displays the link as blocks. */
+ul.dropdown li ul a {
+display:block;
+border:1px solid #777;
+}
+ 
+/* sub menus!!  */
+ 
+ul.dropdown ul {
+list-style: none;
+margin:0; /* Appear just below the hovering list */
+padding:0;
+width:200px; /* specify the width. */
+position:absolute; /* needed */
+z-index:500; /* specify the order */
+}
+ 
+ul.dropdown li ul {
+top:27px; /* Positioning:Calc with top level horz list height */
+}
+ 
+ul.dropdown ul ul {
+top:0;
+left:100%; /* Position the sub menus to right. */
+}
+ 
+ul.dropdown ul li {
+float:none; /* umm.. Appear below the previous one. mmkay? */
+}
+ 
+/* Drop Down! */
+ 
+/* Hide all the dropdowns (submenus) */
+ul.dropdown ul,
+ul.dropdown li:hover ul ul,
+ul.dropdown ul li:hover ul ul
+{ display: none; }
+ 
+/* Display the submenus only when li are hovered */
+ul.dropdown li:hover ul,
+ul.dropdown ul li:hover ul ,
+ul.dropdown ul li ul li:hover ul
+{ display: block;}
+ 
+ul.dropdown li * a:hover {
+/* Change color of links when hovered */
+background: #BDBDBD;
+border-left:1px solid #999;
+border-bottom:1px solid #900;
+border-top:1px solid #222;
+}
 
 
 

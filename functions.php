@@ -39,13 +39,15 @@ function px_scripts() {
         // add it back into the queue
         wp_enqueue_script('jquery');
 
-		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/vendor/adapt.min.js', 'jquery');
+		wp_enqueue_script( 'adapt', get_template_directory_uri() . '/js/vendor/adapt.min.js', 'jquery');
 
-		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/vendor/modernizr-2.6.2.min.js', 'jquery');
+		wp_enqueue_script( 'modernizr', get_template_directory_uri() . '/js/vendor/modernizr-2.6.2.min.js', 'jquery');
 
-		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/plugins.js', 'jquery');
+		wp_enqueue_script( 'carouFredSel', get_template_directory_uri() . '/js/vendor/jquery.carouFredSel-6.2.0-packed.js', 'jquery');
 
-		wp_enqueue_script( 'px-script', get_template_directory_uri() . '/js/main.js', 'jquery');
+		wp_enqueue_script( 'plugins', get_template_directory_uri() . '/js/plugins.js', 'jquery');
+
+		wp_enqueue_script( 'main', get_template_directory_uri() . '/js/main.js', 'jquery');
 
 		wp_enqueue_style( 'px-style', get_stylesheet_uri() );
 
@@ -212,6 +214,7 @@ if ( !function_exists( 'of_get_option' ) ) {
 require_once(TEMPLATEPATH . '/metaboxes/meta_box.php');
 require_once(TEMPLATEPATH . '/inc/sample.php');
 require_once(TEMPLATEPATH . '/core/mobile.php');
+require_once(TEMPLATEPATH . '/core/uploader.php');
 //require_once(TEMPLATEPATH . '/options.php');
 //require_once(TEMPLATEPATH . '/px_helper.php');
 
